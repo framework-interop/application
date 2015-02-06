@@ -57,7 +57,7 @@ class Application
         }
     }
 
-    private function init()
+    protected function init()
     {
         // Init every module
         foreach ($this->modules as $module) {
