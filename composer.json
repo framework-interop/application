@@ -1,0 +1,32 @@
+{
+	"name" : "framework-interop/application",
+	"description" : "A sample implementation of a kernel application for framework-interop",
+	"authors" : [{
+			"name" : "Matthieu Napoli",
+			"email" : "matthieu@mnapoli.fr",
+			"homepage" : "http://mnapoli.fr"
+		},
+		{
+			"name" : "David Négrier",
+			"email" : "d.negrier@thecodingmachine.com",
+			"homepage" : "http://mouf-php.com"
+		}
+	],
+	"keywords" : [
+		"framework-interop",
+		"kernel",
+		"application"
+	],
+	"homepage" : "http://github.com/framework-interop/application",
+	"license" : "MIT",
+	"require" : {
+		"framework-interop/http-module-interface" : "~1.0",
+		"silex/silex" : "~1.1",
+		"acclimate/container" : "~1.0"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Interop\\Framework\\" : "src/"
+		}
+	}
+}
