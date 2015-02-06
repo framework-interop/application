@@ -6,7 +6,6 @@ use Acclimate\Container\CompositeContainer;
 use Exception;
 use Interop\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Mouf\Picotainer\Picotainer;
 
 class Application
 {
@@ -21,9 +20,9 @@ class Application
     private $modules;
 
     /**
-     * 
-     * @param array $modules An array of strings (the class name of the module), or objects implementing ModuleInterface 
-     * @param ContainerInterface $container
+     *
+     * @param  array              $modules   An array of strings (the class name of the module), or objects implementing ModuleInterface
+     * @param  ContainerInterface $container
      * @throws Exception
      */
     public function __construct(array $modules, ContainerInterface $container = null)
@@ -41,12 +40,12 @@ class Application
                 $this->modules[get_class($module)] = $module;
             } else {
                 if (! is_subclass_of($class, ModuleInterface::class)) {
-                    throw new Exception("$class is not an instance of " . ModuleInterface::class);
+                    throw new Exception("$class is not an instance of ".ModuleInterface::class);
                 }
-    
+
                 /** @var ModuleInterface $module */
                 $module = new $class();
-    
+
                 $this->modules[$class] = $module;
             }
 
@@ -57,8 +56,9 @@ class Application
             }
         }
     }
-    
-    private function init() {
+
+    private function init()
+    {
         // Init every module
         foreach ($this->modules as $module) {
             $module->init();
@@ -68,18 +68,18 @@ class Application
     public function runHttp()
     {
         $this->init();
-        
+
         // default app to return a 404 since we declare no route in it!
         // TODO: we should consider how we can provide our own 404 handler (the final kernel that answers)
         $app = new \Silex\Application();
-        
+
         $reverseModules = array_reverse($this->modules);
         foreach ($reverseModules as $module) {
-        	if ($module instanceof HttpModuleInterface) {
-        		$app = $module->getHttpMiddleware($app);
-        	}
+            if ($module instanceof HttpModuleInterface) {
+                $app = $module->getHttpMiddleware($app);
+            }
         }
-        
+
         $request = Request::createFromGlobals();
 
         $response = $app->handle($request);
