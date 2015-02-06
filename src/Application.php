@@ -12,12 +12,12 @@ class Application
     /**
      * @var CompositeContainer
      */
-    private $container;
+    protected $container;
 
     /**
      * @var Module[]
      */
-    private $modules;
+    protected $modules;
 
     /**
      *
