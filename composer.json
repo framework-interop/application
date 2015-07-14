@@ -1,5 +1,5 @@
 {
-	"name" : "framework-interop/application",
+    "name" : "framework-interop/application",
 	"description" : "A sample implementation of a kernel application for framework-interop",
 	"authors" : [{
 			"name" : "Matthieu Napoli",
@@ -20,9 +20,11 @@
 	"homepage" : "http://github.com/framework-interop/application",
 	"license" : "MIT",
 	"require" : {
-		"framework-interop/http-module-interface" : "~1.0",
-		"silex/silex" : "~1.1",
-		"acclimate/container" : "~1.0"
+		"framework-interop/http-module-interface" : "~2.0",
+		"slim/slim" : "~3.0",
+		"acclimate/container" : "~1.0",
+	    "zendframework/zend-stratigility": "~1.0",
+	    "zendframework/zend-diactoros": "~1.0"
 	},
 	"autoload" : {
 		"psr-4" : {

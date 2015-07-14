@@ -6,8 +6,12 @@ use Acclimate\Container\CompositeContainer;
 use Exception;
 use Interop\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Zend\Stratigility\MiddlewarePipe;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
-class Application
+
+class Application extends MiddlewarePipe
 {
     /**
      * @var CompositeContainer
@@ -21,7 +25,7 @@ class Application
 
     /**
      *
-     * @param  array              $modules   An array of strings (the class name of the module), or objects implementing ModuleInterface
+     * @param  ModuleInterface[]|array              $modules   An array of strings (the class name of the module), or objects implementing ModuleInterface
      * @param  ContainerInterface $container
      * @throws Exception
      */
@@ -54,6 +58,14 @@ class Application
             if ($subContainer) {
                 $this->container->addContainer($subContainer);
             }
+
+            // Register the module's HTTP routers
+            foreach ($this->modules as $module) {
+                if ($module instanceof HttpModuleInterface) {
+                    // Note: we could use a "getPath" here as first argument
+                    $this->pipe($router->getMiddleware());
+                }
+            }
         }
     }
 
@@ -65,24 +77,25 @@ class Application
         }
     }
 
-    public function runHttp()
+
+    /**
+     * Handle a request
+     *
+     * Takes the pipeline, creates a Next handler, and delegates to the
+     * Next handler.
+     *
+     * If $out is a callable, it is used as the "final handler" when
+     * $next has exhausted the pipeline; otherwise, a FinalHandler instance
+     * is created and passed to $next during initialization.
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param callable $out
+     * @return Response
+     */
+    public function __invoke(Request $request, Response $response, callable $out = null)
     {
         $this->init();
-
-        // default app to return a 404 since we declare no route in it!
-        // TODO: we should consider how we can provide our own 404 handler (the final kernel that answers)
-        $app = new \Silex\Application();
-
-        $reverseModules = array_reverse($this->modules);
-        foreach ($reverseModules as $module) {
-            if ($module instanceof HttpModuleInterface) {
-                $app = $module->getHttpMiddleware($app);
-            }
-        }
-
-        $request = Request::createFromGlobals();
-
-        $response = $app->handle($request);
-        $response->send();
+        return parent::__invoke($request, $response, $out);
     }
 }

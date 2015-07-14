@@ -57,9 +57,14 @@ In order to run your application, you just need an `index.php` file:
 
 **index.php**
 ```php
+use Zend\Diactoros\Server;
+
 require 'app.php';
 
-$app->runHttp();
+$server = Server::createServer($app, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+
+// TODO: add a finalhandler for 404 management (or not...)
+$server->listen();
 ```
 
 ### Using modules instances
